@@ -18,7 +18,7 @@
 const globby = require('globby');
 const {cyan, green, red} = require('ansi-colors');
 const {getStderr} = require('../common/exec');
-const {gitDiffFileMaster} = require('../common/git');
+const {gitDiffFileMain} = require('../common/git');
 const {log, logLocalDev, logWithoutTimestamp} = require('../common/logging');
 
 const checkerExecutable = 'npx npm-exact-versions';
@@ -40,7 +40,7 @@ async function checkExactVersions() {
         cyan(file),
         'do not have an exact version.'
       );
-      logWithoutTimestamp(gitDiffFileMaster(file));
+      logWithoutTimestamp(gitDiffFileMain(file));
       success = false;
     } else {
       logLocalDev(

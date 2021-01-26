@@ -33,7 +33,7 @@ const {
 } = require('../common/logging');
 const {cyan, green, red, yellow} = require('ansi-colors');
 const {getFilesChanged, getFilesFromArgv} = require('../common/utils');
-const {gitDiffNameOnlyMaster} = require('../common/git');
+const {gitDiffNameOnlyMain} = require('../common/git');
 const {maybeUpdatePackages} = require('./update-packages');
 const {watchDebounceDelay} = require('./helpers');
 
@@ -150,7 +150,7 @@ function runLinter(stream) {
  */
 function eslintRulesChanged() {
   return (
-    gitDiffNameOnlyMaster().filter(function (file) {
+    gitDiffNameOnlyMain().filter(function (file) {
       return (
         path.basename(file).includes('.eslintrc.js') ||
         path.dirname(file) === 'build-system/eslint-rules'

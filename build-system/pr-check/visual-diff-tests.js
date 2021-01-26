@@ -34,7 +34,7 @@ function pushBuildWorkflow() {
   downloadNomoduleOutput();
   timedExecOrDie('gulp update-packages');
   process.env['PERCY_TOKEN'] = atob(process.env.PERCY_TOKEN_ENCODED);
-  timedExecOrDie('gulp visual-diff --nobuild --master');
+  timedExecOrDie('gulp visual-diff --nobuild --main');
 }
 
 function prBuildWorkflow() {

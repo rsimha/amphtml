@@ -30,7 +30,7 @@ const https = require('https');
 const {getStdout} = require('./process');
 
 const setupInstructionsUrl =
-  'https://github.com/ampproject/amphtml/blob/master/contributing/getting-started-quick.md#one-time-setup';
+  'https://github.com/ampproject/amphtml/blob/main/contributing/getting-started-quick.md#one-time-setup';
 const nodeDistributionsUrl = 'https://nodejs.org/dist/index.json';
 const gulpHelpUrl =
   'https://medium.com/gulpjs/gulp-sips-command-line-interface-e53411d4467';

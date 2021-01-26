@@ -24,7 +24,7 @@
 const checkDependencies = require('check-dependencies');
 const {cyan, red, yellow} = require('ansi-colors');
 const {getLoggingPrefix, logWithoutTimestamp} = require('../common/logging');
-const {gitDiffColor, gitDiffNameOnly} = require('../common/git');
+const {gitDiffColor, gitDiffNameOnly, mainBranch} = require('../common/git');
 
 /**
  * Makes sure package.json and package-lock.json are in sync.
@@ -83,7 +83,7 @@ function isPackageLockFileProperlyUpdated() {
       loggingPrefix,
       yellow('NOTE:'),
       'To fix this, sync your branch to',
-      cyan('upstream/master') + ', run',
+      cyan(`upstream/${mainBranch}`) + ', run',
       cyan('gulp update-packages') +
         ', and push a new commit containing the changes.'
     );

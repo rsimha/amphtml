@@ -34,7 +34,7 @@ const {
 const {
   gitBranchName,
   gitCommitterEmail,
-  gitCiMasterBaseline,
+  gitCiMainBaseline,
   shortSha,
 } = require('../../common/git');
 const {buildRuntime, installPackages} = require('../../common/utils');
@@ -117,7 +117,7 @@ function maybeOverridePercyEnvironmentVariables() {
  * as baselines for future builds.
  */
 function setPercyBranch() {
-  if (!process.env['PERCY_BRANCH'] && (!argv.master || !isCiBuild())) {
+  if (!process.env['PERCY_BRANCH'] && (!argv.main || !isCiBuild())) {
     const userName = gitCommitterEmail();
     const branchName = gitBranchName();
     process.env['PERCY_BRANCH'] = userName + '-' + branchName;
@@ -130,13 +130,13 @@ function setPercyBranch() {
  * This will let Percy determine which build to use as the baseline for this new
  * build.
  *
- * Only does something during CI, and for non-master branches, since master
+ * Only does something during CI, and for non-main branches, since main
  * builds are always built on top of the previous commit (we use the squash and
  * merge method for pull requests.)
  */
 function setPercyTargetCommit() {
-  if (isCiBuild() && !argv.master) {
-    process.env['PERCY_TARGET_COMMIT'] = gitCiMasterBaseline();
+  if (isCiBuild() && !argv.main) {
+    process.env['PERCY_TARGET_COMMIT'] = gitCiMainBaseline();
   }
 }
 
@@ -417,7 +417,7 @@ async function generateSnapshots(webpages) {
   }
 
   const browser = await launchBrowser();
-  if (argv.master) {
+  if (argv.main) {
     const page = await newPage(browser);
     await page.goto(
       `http://${HOST}:${PORT}/examples/visual-tests/blank-page/blank.html`
@@ -832,7 +832,7 @@ module.exports = {
 
 visualDiff.description = 'Runs the AMP visual diff tests.';
 visualDiff.flags = {
-  'master': '  Includes a blank snapshot (baseline for skipped builds)',
+  'main': '  Includes a blank snapshot (baseline for skipped builds)',
   'empty': '  Creates a dummy Percy build with only a blank snapshot',
   'config':
     '  Sets the runtime\'s AMP_CONFIG to one of "prod" (default) or "canary"',

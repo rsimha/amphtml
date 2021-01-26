@@ -22,7 +22,7 @@ const url = require('url');
 const util = require('util');
 const {
   gitCommitHash,
-  gitCiMasterBaseline,
+  gitCiMainBaseline,
   shortSha,
 } = require('../../common/git');
 const {
@@ -179,7 +179,7 @@ async function skipBundleSize() {
  */
 async function reportBundleSize() {
   if (isPullRequestBuild()) {
-    const baseSha = gitCiMasterBaseline();
+    const baseSha = gitCiMainBaseline();
     const commitHash = gitCommitHash();
     try {
       const response = await requestPost({

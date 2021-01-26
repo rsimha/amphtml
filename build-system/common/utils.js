@@ -22,7 +22,7 @@ const {clean} = require('../tasks/clean');
 const {doBuild} = require('../tasks/build');
 const {doDist} = require('../tasks/dist');
 const {execOrDie} = require('./exec');
-const {gitDiffNameOnlyMaster} = require('./git');
+const {gitDiffNameOnlyMain} = require('./git');
 const {green, cyan, yellow} = require('ansi-colors');
 const {log, logLocalDev} = require('./logging');
 
@@ -54,7 +54,7 @@ async function buildRuntime(opt_compiled = false) {
  */
 function getFilesChanged(globs) {
   const allFiles = globby.sync(globs, {dot: true});
-  return gitDiffNameOnlyMaster().filter((changedFile) => {
+  return gitDiffNameOnlyMain().filter((changedFile) => {
     return fs.existsSync(changedFile) && allFiles.includes(changedFile);
   });
 }

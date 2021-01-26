@@ -20,8 +20,9 @@ const {
   gitBranchName,
   gitCommitHash,
   gitDiffCommitLog,
-  gitDiffStatMaster,
-  gitCiMasterBaseline,
+  gitDiffStatMain,
+  gitCiMainBaseline,
+  mainBranch,
   shortSha,
 } = require('../common/git');
 const {ciBuildSha, ciPullRequestSha, isCiBuild} = require('../common/ci');
@@ -42,7 +43,7 @@ const APP_SERVING_DIRS =
 const GCLOUD_STORAGE_BUCKET = 'gs://amp-travis-builds';
 
 const GIT_BRANCH_URL =
-  'https://github.com/ampproject/amphtml/blob/master/contributing/getting-started-e2e.md#create-a-git-branch';
+  'https://github.com/ampproject/amphtml/blob/main/contributing/getting-started-e2e.md#create-a-git-branch';
 
 /**
  * Prints a summary of files changed by, and commits included in the PR.
@@ -53,8 +54,8 @@ function printChangeSummary() {
 
   if (isCiBuild()) {
     logWithoutTimestamp(
-      `${loggingPrefix} Latest commit from ${cyan('master')} included ` +
-        `in this build: ${cyan(shortSha(gitCiMasterBaseline()))}`
+      `${loggingPrefix} Latest commit from ${cyan(mainBranch)} included ` +
+        `in this build: ${cyan(shortSha(gitCiMainBaseline()))}`
     );
     commitSha = ciPullRequestSha();
   } else {
@@ -65,7 +66,7 @@ function printChangeSummary() {
       `${cyan(shortSha(commitSha))}`
   );
 
-  const filesChanged = gitDiffStatMaster();
+  const filesChanged = gitDiffStatMain();
   logWithoutTimestamp(filesChanged);
 
   const branchCreationPoint = gitBranchCreationPoint();
@@ -73,7 +74,7 @@ function printChangeSummary() {
     logWithoutTimestamp(
       `${loggingPrefix} Commit log since branch`,
       `${cyan(gitBranchName())} was forked from`,
-      `${cyan('master')} at`,
+      `${cyan(mainBranch)} at`,
       `${cyan(shortSha(branchCreationPoint))}:`
     );
     logWithoutTimestamp(gitDiffCommitLog() + '\n');
@@ -84,13 +85,13 @@ function printChangeSummary() {
       'Could not find a common ancestor for',
       cyan(gitBranchName()),
       'and',
-      cyan('master') + '. (This can happen with older PR branches.)'
+      cyan(mainBranch) + '. (This can happen with older PR branches.)'
     );
     logWithoutTimestamp(
       loggingPrefix,
       yellow('NOTE 1:'),
       'If this causes unexpected test failures, try rebasing the PR branch on',
-      cyan('master') + '.'
+      cyan(mainBranch) + '.'
     );
     logWithoutTimestamp(
       loggingPrefix,
