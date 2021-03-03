@@ -15,8 +15,11 @@
  */
 'use strict';
 
+const closureCompiler = require('@ampproject/google-closure-compiler').gulp();
+const gulp = require('gulp');
+const rename = require('gulp-rename');
 const {cyan, red, yellow} = require('kleur/colors');
-const {getOutput} = require('../common/process');
+const {getBabelCacheDir} = require('./pre-closure-babel');
 const {highlight} = require('cli-highlight');
 const {log} = require('../common/logging');
 
@@ -69,18 +72,35 @@ function handleTypeCheckError(err) {
  * @param {string} err
  */
 function logError(message, err) {
-  log(`${message}\n` + formatClosureCompilerError(err));
+  log(`${message}\n` + err);
 }
 
 /**
  * Runs closure compiler with the given set of flags.
- * @param {Array<string>} flags
- * @return {!Object}
+ * @param {!Object} options
+ * @param {!Object} closureOptions
+ * @param {!Array<string>} transformedSrcFiles
+ * @param {string} outputFilename
+ * @param {string} outputDir
+ * @return {Promise<void>}
  */
-function runClosure(flags) {
-  const closureExecutable = 'npx @ampproject/google-closure-compiler';
-  const closureCmd = `${closureExecutable} ${flags.join(' ')}`;
-  return getOutput(closureCmd);
+async function runClosure(
+  options,
+  closureOptions,
+  transformedSrcFiles,
+  outputFilename,
+  outputDir
+) {
+  return gulp
+    .src(transformedSrcFiles, {base: getBabelCacheDir()})
+    .pipe(closureCompiler(closureOptions))
+    .on('error', (err) => {
+      options.typeCheckOnly
+        ? handleTypeCheckError(err)
+        : handleCompilerError(err, outputFilename, options);
+    })
+    .pipe(rename(outputFilename))
+    .pipe(gulp.dest(outputDir));
 }
 
 module.exports = {

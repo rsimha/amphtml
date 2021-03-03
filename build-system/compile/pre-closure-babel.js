@@ -74,6 +74,7 @@ function getFilesToTransform() {
 async function preClosureBabel(file, outputFilename, options) {
   if (!cacheDir) {
     cacheDir = tempy.directory();
+    console.log(cacheDir);
   }
   if (!filesToTransform) {
     filesToTransform = getFilesToTransform();

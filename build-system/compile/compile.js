@@ -425,6 +425,24 @@ function generateFlags(
   return flags;
 }
 
+function generateOptions(
+  options,
+  compilerOptions,
+  transformedSrcFiles,
+  entryModuleFilenames,
+  destFile,
+  sourcemapFile
+) {
+  const entryPoints = entryModuleFilenames.map((entryFile) =>
+    transformedSrcFiles.find((srcFile) => srcFile.endsWith(entryFile))
+  );
+  const closureOptions = {...compilerOptions, entry_point: entryPoints};
+  // if (!options.typeCheckOnly) {
+  //   closureOptions.create_source_map = sourcemapFile;
+  // }
+  return closureOptions;
+}
+
 /**
  * @param {string[]|string} entryModuleFilenames
  * @param {string} outputDir
@@ -483,12 +501,21 @@ async function compile(
     destFile,
     sourcemapFile
   );
-  const {status, stderr} = runClosure(flags);
-  if (status != 0) {
-    options.typeCheckOnly
-      ? handleTypeCheckError(stderr)
-      : handleCompilerError(stderr, outputFilename, options);
-  }
+  const closureOptions = generateOptions(
+    options,
+    compilerOptions,
+    transformedSrcFiles,
+    entryModuleFilenames,
+    destFile,
+    sourcemapFile
+  );
+  await runClosure(
+    options,
+    closureOptions,
+    transformedSrcFiles,
+    outputFilename,
+    outputDir
+  );
   if (!options.typeCheckOnly) {
     if (!argv.pseudo_names && !options.skipUnknownDepsCheck) {
       await checkForUnknownDeps(destFile);
